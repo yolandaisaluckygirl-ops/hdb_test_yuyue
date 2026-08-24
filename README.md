@@ -130,6 +130,24 @@ resale_identifier + cleaned transaction natural key
 
 using SHA-256. This produces a 64-character irreversible hash in `hashed_resale_identifier`.
 
+## Architecture Deliverables
+
+```text
+architecture/hdb_resale_architecture.png
+```
+
+```
+The proposed production architecture uses:
+
+- EventBridge Scheduler to trigger the ECS Fargate ETL task.
+- ECS Fargate in a private subnet to extract, validate, transform, and load HDB resale data.
+- NAT Gateway for outbound access to data.gov.sg and AWS services without VPC endpoints.
+- S3 Gateway Endpoint for private access to the S3 raw and curated zones.
+- Glue Data Catalog and Athena to manage metadata and query curated data.
+- Athena Interface Endpoint for private connectivity from Tableau.
+- CloudWatch, CloudTrail, EventBridge, SNS, and SQS for monitoring, auditing, retry handling, and failure alerts.
+
+Scheduler invocation failures are handled through retry policies and an SQS DLQ. ECS runtime failures are detected through task-state change events and routed to the configured alerting process.
 
 ## Future Improvements
 
