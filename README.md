@@ -136,7 +136,7 @@ using SHA-256. This produces a 64-character irreversible hash in `hashed_resale_
 architecture/hdb_resale_architecture.png
 ```
 
-```
+
 The proposed production architecture uses:
 
 - EventBridge Scheduler to trigger the ECS Fargate ETL task.
@@ -149,7 +149,7 @@ The proposed production architecture uses:
 
 Scheduler invocation failures are handled through retry policies and an SQS DLQ. ECS runtime failures are detected through task-state change events and routed to the configured alerting process.
 
-## Future Improvements
+## Future Improvement
 
 Recommended enhancements for a production version:
 
