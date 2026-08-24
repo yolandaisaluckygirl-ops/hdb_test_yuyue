@@ -130,32 +130,6 @@ resale_identifier + cleaned transaction natural key
 
 using SHA-256. This produces a 64-character irreversible hash in `hashed_resale_identifier`.
 
-## Architecture Deliverables
-
-```text
-architecture/hdb_resale_architecture.png
-architecture/architecture_notes.md
-src/hdb_resale_etl/architecture_diagrams.py
-```
-
-The architecture covers:
-
-- AWS Managed Services:
-  - EventBridge Scheduler for scheduled ECS/Fargate `RunTask` invocation.
-  - Amazon S3 raw zone, curated zone, and Athena query-results location.
-  - AWS Glue Data Catalog for table and partition metadata, updated by the Fargate ETL task through the Glue API.
-  - Amazon Athena as the managed query service, reading Glue metadata, scanning curated S3 data, and writing query results to S3.
-  - CloudWatch, CloudTrail, and alerting targets for observability, audit, and failed-task notifications.
-- HDB Private VPC:
-  - Public subnet with NAT Gateway and an Internet Gateway attached to the VPC for controlled outbound internet access to data.gov.sg and AWS services without VPC endpoints.
-  - Private subnet with the ECS Fargate ETL task, which extracts from data.gov.sg, writes raw files, validates and transforms data, writes curated outputs, and updates Glue Catalog metadata.
-  - S3 Gateway Endpoint associated with the private route table so Fargate can access S3 without routing S3 traffic through NAT.
-- Tableau VPC:
-  - Private subnet hosting Tableau Server.
-  - Athena Interface VPC Endpoint ENI used by Tableau to reach Athena privately.
-- Failure handling:
-  - EventBridge Scheduler retry policy and SQS DLQ cover Scheduler target invocation failures.
-  - ECS task runtime failures are detected through ECS task-state change events, routed through an EventBridge rule to CloudWatch/SNS/SQS alerting or a failure handler.
 
 ## Future Improvements
 
